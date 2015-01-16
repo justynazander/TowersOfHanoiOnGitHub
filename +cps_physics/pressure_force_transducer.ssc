@@ -1,0 +1,40 @@
+component pressure_force_transducer
+% Transducer Between Force and Pressure
+  parameters
+    area = { 2, '1' };
+  end
+  
+  nodes
+    A = foundation.pneumatic.pneumatic; % A:left
+    C = foundation.mechanical.translational.translational; % C:right
+    PGND = foundation.pneumatic.pneumatic; % GND:left
+    TGND = foundation.mechanical.translational.translational; % GND:right
+  end
+
+  variables
+    p1 = { 0, '1' };
+    f2 = { 0, '1' };
+    G1 = { 0, '1' };
+    v2 = { 0, '1' };
+    T1 = { 0, '1' };
+    Q1 = { 0, '1' };
+    heat_flow = { 0, '1'};
+  end
+
+  function setup
+    through( G1, A.G, PGND.G );
+    through( f2, TGND.f, C.f );
+    across( p1, A.p, PGND.p );
+    across( v2, C.v, TGND.v );
+    through( Q1, A.Q, PGND.Q );
+    across( T1, A.T, PGND.T );
+  end
+ 
+  equations
+      f2 == area * p1;
+      G1 == area * v2;
+      heat_flow == 717.86 * G1 % specific heat at constant volume (cv)
+      Q1 == heat_flow;
+  end
+    
+end

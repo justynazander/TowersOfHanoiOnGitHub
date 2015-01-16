@@ -1,0 +1,39 @@
+component conditional_damper < foundation.mechanical.translational.branch
+% Conditional Translational Damper
+% The block represents an ideal mechanical translational viscous damper
+% that may be disabled. 
+%
+% Connections R and C are mechanical translational conserving ports, 
+% with R representing the damper rod, while C is associated with the
+% damper case. The block positive direction is from port R to port C. 
+%
+% Connection D is a signal port to enable and disable the viscous
+% damping. Damping is disabled if the absolute value on is less than
+% the activation threshold parameter.
+
+% Copyright 2005-2011 The MathWorks, Inc.
+
+  inputs
+    disable = { 0, '1' };      % D:left
+  end
+  
+  parameters
+    D = { 100, 'N*s/m' };    % Damping coefficient
+    th = { 1e-12, '1' };      % Activation threshold
+  end
+  
+  function setup
+    if D < 0
+      pm_error('simscape:GreaterThanOrEqualToZero','Damping coefficient' )
+    end
+  end
+
+  equations
+      if abs(disable) < th
+        f == D*v;
+      else
+        f == 0;
+      end
+  end
+
+end

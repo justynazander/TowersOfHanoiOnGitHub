@@ -1,0 +1,66 @@
+component hardstop_external_ini < foundation.mechanical.translational.branch
+% Translational Hard Stop With External Initial Position
+% The block represents a double-sided mechanical translational hard stop
+% that restricts motion of a body between upper and lower bounds. The stop
+% is implemented as a spring that comes into contact with the slider as
+% the gap is cleared. To account for energy dissipation and non-elastic
+% effects, the damping is introduced as the block parameter, thus making
+% it possible to account for energy loss.
+%
+% Connections R and C are mechanical translational conserving ports. 
+% The block is oriented from R to C. This means that the block transmits 
+% force from port R to port C when the gap is closed in the positive
+% direction.
+% 
+% Connection I is an initial value port to provide an external initial
+% position for the body.
+
+  parameters
+    stiff_up = { 1e6, 'N/m' };      % Contact stiffness at upper bound
+    stiff_low = { 1e6, 'N/m' };     % Contact stiffness at lower bound
+    D_up = { 150, 'N*s/m'};         % Contact damping at upper bound
+    D_low = { 150, 'N*s/m'};        % Contact damping at lower bound
+  end 
+   
+  inputs
+    upper_bnd = { 0.1, 'm' };       % U:right
+    lower_bnd = { -0.1, 'm' };      % L:left
+    x_initial = { 0.0, 'm' };       % I:left
+  end
+    
+  variables
+    x = { 0, 'm'};
+  end
+   
+  function setup
+    if stiff_up <= 0
+      pm_error('simscape:GreaterThanZero','Contact stiffness at upper bound')
+    end
+    if stiff_low <= 0
+      pm_error('simscape:GreaterThanZero','Contact stiffness at lower bound')
+    end
+    if D_up < 0
+      pm_error('simscape:GreaterThanOrEqualToZero','Contact damping at upper bound')
+    end
+    if D_low < 0
+      pm_error('simscape:GreaterThanOrEqualToZero','Contact damping at lower bound')
+    end
+    x = 0.0;
+  end
+
+  equations
+    if ((x + x_initial) > upper_bnd)
+        % Slider hits upper bound
+        f == stiff_up * ((x + x_initial) - upper_bnd) + D_up * v;
+    elseif ((x + x_initial) < lower_bnd)
+        % Slider hits lower bound
+        f == stiff_low * ((x + x_initial) - lower_bnd) + D_low * v;
+    else
+        % Slider is between hardstops
+        f == {0 'N'}; 
+    end
+    x.der == v;
+  end
+        
+end
+

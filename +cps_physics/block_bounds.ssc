@@ -1,0 +1,105 @@
+component block_bounds
+% Block Bounds
+% This block computes the position bounds of the O block relative
+% to the I and J block as well as the position of the nozzle.
+
+  inputs
+    board_vpos_param   = { 0, 'm' };    % board pos :left
+    block_height_param = { 0.07, 'm' }; % O height  :left
+    I_vpos = { 0, 'm' };        % I vpos     :left
+    I_hpos = { 0, 'm' };        % I hpos     :left
+    J_vpos = { 0, 'm' };        % J vpos     :left
+    J_hpos = { 0, 'm' };        % J hpos     :left
+    slider_pos = { 0, 'm' };    % slider pos :left
+    nozzle_pos = { 0, 'm' };    % nozzle pos :left
+    O_hpos = { 0, 'm' };        % O hpos     :left
+    O_vpos = { 0, 'm' };        % O vpos     :left
+  end
+
+  outputs
+    lower_bound = { 0, 'm' };   % lower bound :right
+    upper_bound = { 0, 'm' };   % upper bound :right
+    U_hpos  = { 0, 'm' };       % U hpos      :right
+    U_vpos  = { 0, 'm' };       % U vpos      :right
+  end
+  
+  parameters %some of these should be passed in from the top model
+      block_width    = { 0.15, 'm' };   % Block Width
+      nozzle_radius  = { 0.06, 'm' };   % Nozzle Radius
+      vmargin = {1e-6, 'm'};            % Precision Margin
+  end
+  
+  parameters(Access = private)
+      block_extends = {0, 'm' }
+  end
+
+  variables
+      block_height = { 0.07, 'm' };  % Block Height
+      board_vpos   = {0, 'm'};       % Board Position
+  end
+  
+  function setup
+      block_extends = block_width + nozzle_radius/2;
+  end
+
+  equations
+      board_vpos == board_vpos_param;     % This should really be passed in
+      block_height == block_height_param; % as a parameter but because it
+                                          % is a model argument this is not
+                                          % currently supported.
+      let
+          nozzle_displacement = abs(O_hpos - slider_pos);
+          I_displacement = abs(O_hpos - I_hpos);
+          J_displacement = abs(O_hpos - J_hpos);
+      in          
+          if I_vpos > O_vpos && I_displacement < block_width
+              if J_vpos > O_vpos && J_displacement < block_width
+                  if J_vpos < I_vpos
+                      upper_bound == J_vpos + vmargin; 
+                      U_vpos == J_vpos; 
+                      U_hpos == J_hpos; 
+                  else
+                      upper_bound == I_vpos + vmargin; 
+                      U_vpos == I_vpos; 
+                      U_hpos == I_hpos; 
+                  end
+              else
+                  upper_bound == I_vpos + vmargin; 
+                  U_vpos == I_vpos; 
+                  U_hpos == I_hpos;
+              end
+          else
+              if J_vpos > O_vpos && J_displacement < block_width
+                  upper_bound == J_vpos + vmargin; 
+                  U_vpos == J_vpos; 
+                  U_hpos == J_hpos;
+              else
+                  if nozzle_displacement < block_extends
+                      upper_bound == nozzle_pos;
+                  else
+                      upper_bound == O_vpos + vmargin;
+                  end
+                  U_vpos == I_vpos; % The choice of block I is arbitrary
+                  U_hpos == I_hpos; % because both blocks are below block O
+              end
+          end
+          
+          if I_vpos < O_vpos && I_displacement < block_width 
+              if J_vpos < O_vpos && J_displacement < block_width
+                  lower_bound == if J_vpos > I_vpos, ...
+                          J_vpos + block_height; else ...
+                          I_vpos + block_height; end        
+              else           
+                  lower_bound == I_vpos + block_height;        
+              end
+          else
+              if J_vpos < O_vpos && J_displacement < block_width                      
+                  lower_bound == J_vpos + block_height;
+              else
+                  lower_bound == board_vpos + block_height;
+             end
+          end
+      end
+  end
+
+end
