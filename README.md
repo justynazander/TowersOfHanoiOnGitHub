@@ -9,13 +9,14 @@ Stereoscopic vision of a video stream of the virtual world enables the machine t
 
 http://www.youtube.com/watch?v=L85uAgMamX8
 
-This software is citable: 
-@article{Towers15,
-      author        = "Pieter Mosterman and Justyna Zander",
-      title         = "{TowersOfHanoiOnGitHub: Towers of Hanoi in
-                       MATLAB/Simulink}",
-      month         = "Jan",
-      year          = "2015",
-      doi           = "{10.5281/zenodo.13977}",
-      url           = "{http://dx.doi.org/10.5281/zenodo.13977}",
-}
+This software is citable. 
+Citation: 
+===========================================
+      @article{Towers15,
+            author        = "Pieter Mosterman and Justyna Zander",
+            title         = "{TowersOfHanoiOnGitHub: Towers of Hanoi in MATLAB/Simulink}",
+            month         = "Jan",
+            year          = "2015",
+            doi           = "{10.5281/zenodo.13977}",
+            url           = "{http://dx.doi.org/10.5281/zenodo.13977}",}
+===========================================
