@@ -8,3 +8,14 @@ The Smart Manufacturing Robotics Cyber Physical System is a pick and place machi
 Stereoscopic vision of a video stream of the virtual world enables the machine to first locate where the stack of blocks is. Feedforward control allows a quick pick and place action. Feedback control is used to move the blocks between locations. A pneumatic airflow is modeled to enable the machine to pick and move the blocks.
 
 http://www.youtube.com/watch?v=L85uAgMamX8
+
+This software is citable: 
+@article{Towers15,
+      author        = "Pieter Mosterman and Justyna Zander",
+      title         = "{TowersOfHanoiOnGitHub: Towers of Hanoi in
+                       MATLAB/Simulink}",
+      month         = "Jan",
+      year          = "2015",
+      doi           = "{10.5281/zenodo.13977}",
+      url           = "{http://dx.doi.org/10.5281/zenodo.13977}",
+}
