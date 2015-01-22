@@ -16,3 +16,4 @@ disp(' ');
 disp('If you want to create the dialogs for the custom Simscape blocks,');
 disp('build the library by typing ssc_build(''cps_physics'') at the');
 disp('command prompt.');
+% eclipse 
